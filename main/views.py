@@ -46,7 +46,7 @@ def home(response):
 
 
 @notLoggedIn
-@authorized_users(authorized_roles=['landlord'])
+# @authorized_users(authorized_roles=['landlord'])
 def create(response):
     if response.method == "POST":
         form = CreatePortfolio(response.POST)
@@ -142,21 +142,3 @@ def file_delete(request, pk):
         file = propDoc1.objects.get(pk=pk)
         file.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-
-@notLoggedIn
-def file_encrypt(request, url):
-    import PyPDF2
-    if request.method == 'POST':
-        file = url
-        pdfFile = open(file, 'rb')
-        print("TESTING")
-        pdfReader = PyPDF2.PdfFileReader(pdfFile)
-        pdfWriter = PyPDF2.PdfFileWriter()
-        for pageNum in range(pdfReader.numPages):
-            pdfWriter.addPage(pdfReader.getPage(pageNum))
-        pdfWriter.encrypt(propDoc.pdfPass)
-        resultPdf = open('output.pdf', 'wb')
-        pdfWriter.write(resultPdf)
-        resultPdf.close()
-    return redirect('/files')
